@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+<!-- Extends base.html to inherit navbar, Bootstrap styles, and scripts -->
+
+{% block content %}
+<!-- Overrides the content block from base.html to display delete confirmation -->
+
+<!-- Static heading for delete confirmation -->
+<h1>Delete Note</h1>
+
+<!-- Confirmation message with note title -->
+<p>Are you sure you want to delete "{{ note.title }}"?</p>
+<!-- Displays the title of the note to be deleted, passed as 'note' from view -->
+
+<!-- Form for confirming note deletion -->
+<form method="post">
+  <!-- Submits to the current URL (handled by note_delete view) -->
+
+  {% csrf_token %}
+  <!-- Adds CSRF token for POST request security, required by Django -->
+
+  <button type="submit" class="btn btn-danger">Yes, Delete</button>
+  <!-- Submits the form to delete the note, styled as a danger button -->
+
+  <a href="{% url 'note_list' %}" class="btn btn-secondary">Cancel</a>
+  <!-- Links to note_list view to cancel deletion, styled as a button -->
+</form>
+
+{% endblock %}

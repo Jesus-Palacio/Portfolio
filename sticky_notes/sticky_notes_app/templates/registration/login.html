@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+<!-- Extends base.html to inherit navbar, Bootstrap styles, and scripts -->
+
+{% block content %}
+<!-- Overrides the content block from base.html to display the login form -->
+
+<!-- Static heading for login page -->
+<h1>Login</h1>
+
+<!-- Form for user authentication -->
+<form method="post">
+  <!-- Submits to the current URL (handled by LoginView or custom login view) -->
+  {% csrf_token %}
+  <!-- Adds CSRF token for POST request security, required by Django -->
+
+  {{ form.as_p }}
+  <!-- Renders AuthenticationForm fields (username, password) as paragraphs -->
+  <!-- Fields and validation managed by Django's AuthenticationForm -->
+
+  <button type="submit" class="btn btn-primary">Login</button>
+  <!-- Submits the form to authenticate the user, styled with Bootstrap -->
+</form>
+
+<!-- Sign-up link for new users -->
+<p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+<!-- Links to signup view for users without accounts -->
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+<!-- Extends base.html to inherit navbar, styles, and scripts (Bootstrap, 
+jQuery, jQuery UI) -->
+
+{% block content %}
+<!-- Overrides the content block from base.html to display the note list -->
+
+<!-- Container for notes: Relative positioning for absolute note placement -->
+<div class="mt-3 position-relative" style="min-height: 600px">
+  <!-- mt-3 adds top margin; min-height ensures space for dragging notes -->
+
+  <!-- Loops iterating over 'notes' QuerySet from the view (list of Note 
+  objects) -->
+  {% for note in notes %}
+
+  <!-- Note card: Styled and positioned based on Note model fields representing
+  a single sticky note-->
+  <div
+    class="card note-card"
+    style="background-color: {{ note.color }}; 
+                        position: absolute; 
+                        left: {{ note.x_position }}px; 
+                        top: {{ note.y_position }}px; 
+                        width: 300px;"
+    data-note-id="{{ note.pk }}"
+  >
+    <!-- card: Bootstrap styling; note-card: Custom class for additional styles -->
+    <!-- Styles set color, absolute position (x, y), and fixed width -->
+    <!-- data-note-id stores the note's primary key for JavaScript/AJAX -->
+
+    <!--Card body that displays the note’s title, content and last updated
+    timestamp-->
+    <div class="card-body">
+      <h5 class="card-title">{{ note.title }}</h5>
+      <!-- Displays note title from Note model -->
+      <p class="card-text">{{ note.content }}</p>
+      <!-- Displays note content -->
+      <small>Last updated: {{ note.updated_at }}</small>
+      <!-- Shows last updated timestamp -->
+
+      <div class="mt-2">
+        <!-- Edit button: Links to note_update URL with the note’s pk, styled
+        as a small warning button -->
+        <a href="{% url 'note_update' note.pk %}" class="btn btn-sm btn-warning"
+          >Edit</a
+        >
+        <!--Delete button: Links to note_delete URL with the note’s pk, styled
+        as a small danger button-->
+        <a href="{% url 'note_delete' note.pk %}" class="btn btn-sm btn-danger"
+          >Delete</a
+        >
+      </div>
+    </div>
+  </div>
+
+  {% empty %}
+  <!--If the notes list is empty, displays "No notes yet!"-->
+
+  <p>No notes yet!</p>
+  {% endfor %}
+</div>
+
+<!-- JavaScript for drag-and-drop functionality -->
+<script>
+  $(document).ready(function () {
+    // Runs the code when DOM is fully loaded (requires jQuery from base.html)
+    $(".note-card").draggable({
+      // Makes all elements with class note-card draggable using jQuery UI
+      containment: "parent", // Restricts dragging within the container div
+      stop: function (event, ui) {
+        // Triggered when dragging stops
+        var noteId = $(this).data("note-id"); // Gets note ID from the data-note-id attribute
+        var position = $(this).position(); // Gets new position (left and top in pixels)
+        $.ajax({
+          // Sends POST request to update position in backend
+          url: "{% url 'update_position' %}", // Targets update_position view
+          type: "POST",
+          data: {
+            note_id: noteId, // The note’s primary key (Note ID) to update
+            x: Math.round(position.left), // Rounded x-coordinate
+            y: Math.round(position.top), // Rounded y-coordinate
+            csrfmiddlewaretoken: "{{ csrf_token }}", // CSRF token for Django security
+          },
+          success: function (response) {
+            // On success (status: 'success' from view)
+            console.log("Position updated");
+          },
+          error: function () {
+            // On failure (e.g., status: 'error' or network issue)
+            console.log("Error updating position");
+          },
+        });
+      },
+    });
+  });
+</script>
+{% endblock %}

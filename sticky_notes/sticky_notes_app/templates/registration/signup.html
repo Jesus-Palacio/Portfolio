@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+<!-- Extends base.html to inherit navbar, Bootstrap styles, and scripts -->
+
+{% block content %}
+<!-- Overrides the content block from base.html to display the sign-up form -->
+
+<!-- Static heading for sign-up page -->
+<h1>Sign Up</h1>
+
+<!-- Form for user registration -->
+<form method="post">
+  <!-- Submits to the current URL (handled by sign-up view) -->
+  {% csrf_token %}
+  <!-- Adds CSRF token for POST request security, required by Django -->
+
+  {{ form.as_p }}
+  <!-- Renders UserCreationForm fields (username, password1, password2) as paragraphs -->
+  <!-- Fields and validation managed by Django's UserCreationForm -->
+
+  <button type="submit" class="btn btn-primary">Sign Up</button>
+  <!-- Submits the form to create a new user, styled with Bootstrap -->
+</form>
+
+<!-- Login link for existing users -->
+<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+<!-- Links to login view for users with existing accounts -->
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+<!-- Extends base.html to inherit navbar, styles, and scripts (Bootstrap, 
+jQuery, jQuery UI) -->
+
+{% block content %}
+<!-- Overrides the content block from base.html for displaying and submitting
+the note form -->
+
+<!-- Dynamic heading: Shows 'Edit' or 'Create' based on form context -->
+<h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Note</h1>
+<!-- Checks if form.instance.pk exists (edit mode) or not (create mode) -->
+<!-- .pk: Primary key (Note Id); if it exists (not None), the note already
+exists (edit mode). If pk is None (new note), shows "Create"-->
+
+<!-- Form for creating or editing a note -->
+<form method="post">
+  <!-- Submits to the current URL (handled by note_create or note_update view) -->
+
+  {% csrf_token %}
+  <!-- Adds CSRF token for POST request security, required by Django -->
+
+  {{ form.as_p }}
+  <!-- Renders NoteForm fields (title, content, color, x/y_position) as paragraphs -->
+  <!--Displays an empty form; saves a new note on submission for note creation. 
+  Displays a pre-populated form; updates the existing note on submission for note editing -->
+  <!-- Fields styled with Bootstrap 'form-control' via NoteForm widgets -->
+  <!-- x_position and y_position are hidden inputs -->
+
+  <button type="submit" class="btn btn-primary">Save</button>
+  <!-- Submits the form to save the note, styled with Bootstrap -->
+
+  <a href="{% url 'note_list' %}" class="btn btn-secondary">Cancel</a>
+  <!-- Links to note_list view to abandon form, styled as a button -->
+</form>
+
+{% endblock %}
